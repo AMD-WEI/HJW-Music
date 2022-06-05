@@ -43,7 +43,6 @@ Page({
 
   //
   handleSwiperChange: function (event) {
-    console.log(event);
     const current = event.detail.current
     this.setData({ currentPage: current })
   }
