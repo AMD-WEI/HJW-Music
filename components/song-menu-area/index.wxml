@@ -1,0 +1,12 @@
+<!-- components/song-menu-area/index.wxml -->
+<!-- <area-header title="{{title}}"></area-header> -->
+<view class="{{area}}">
+  <!-- <scroll-view scroll-x class="menu-list" style="width: {{screenWidth}}px;"> -->
+  <scroll-view scroll-x="{{scrollX}}" scroll-y="{{scrollY}}" class="{{menuListClass}}">
+    <block wx:for="{{songMenu}}" wx:key="id">
+      <view class="{{menuItemClass}}">
+        <song-menu-item item="{{item}}" data-item="{{item}}" bindtap="handleMenuItemCilck"></song-menu-item>
+      </view>
+    </block>
+  </scroll-view>
+</view>

@@ -1,0 +1,31 @@
+<!-- components/songlist-detail-header/index.wxml -->
+<wxs src="/utils/format.wxs" module="format"></wxs>
+<!-- 背景 -->
+<view class="header">
+  <image class="bg-image" src="{{songInfo.coverImgUrl}}" mode="aspectFill" />
+  <!-- 附在背景图上的一层模糊图，作用是模糊背景图 -->
+  <view class="bg-cover"></view>
+  <!-- 内容 -->
+  <view class="content">
+    <image class="image" src="{{songInfo.coverImgUrl}}" mode="aspectFill" />
+    <view class="info">
+      <view class="title">{{songInfo.name}}</view>
+      <view class="anthor">
+        <image class="avatar" src="{{songInfo.creator.avatarUrl}}" mode="aspectFill" />
+        <text class="nickname">{{songInfo.creator.nickname}}</text>
+      </view>
+      <view class="desc">简介：{{songInfo.description}}</view>
+    </view>
+  </view>
+  <!-- 内容 -->
+  <view class="operation">
+    <view class="item">
+      <image class="icon" src="/assets/images/icons/favor_icon.png" mode="widthFix" />
+      <text class="text">{{format.formatCount(songInfo.playCount)}}</text>
+    </view>
+    <view class="item">
+      <image class="icon" src="/assets/images/icons/share_icon.png" mode="widthFix" />
+      <text class="text">分享</text>
+    </view>
+  </view>
+</view>
