@@ -1,0 +1,17 @@
+<!-- components/song-item-v2/index.wxml -->
+<view class="item" bindtap="handleSongItemClick">
+  <view class="index">{{index}}</view>
+  <view class="info">
+    <view class="song-name">{{item.name}}</view>
+    <view class="source">
+      <image class="icon" src="/assets/images/icons/sq_icon.png" mode="scaleToFill" />
+      <text class="singer">{{item.ar[0].name || item.artists[0].name}}</text>
+      <!-- <text class="dots" wx:if="{{item.alia[0]}}">·</text> -->
+      <text wx:if="{{item.alia[0] || item.alias[0] || item.al.name || item.album.name}}">
+        <text class="dots">·</text>
+        <!-- <text class="song-detail" wx:if="{{item.alia[0] || item.alias[0]}}"> -->
+        <text class="song-detail">{{item.alia[0] || item.alias[0] || item.al.name || item.album.name}}</text>
+      </text>
+    </view>
+  </view>
+</view>

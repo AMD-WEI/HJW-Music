@@ -1,0 +1,64 @@
+/* components/ranking-area-item/index.wxss */
+.ranking-list {
+  display: flex;
+  justify-content: space-between;
+  height: 220rpx;
+  margin-bottom: 20rpx;
+  background-color: rgba(228, 219, 219, 0.2);
+  border-radius: 12rpx;
+}
+
+.left {
+  margin: 26rpx;
+  width: 355rpx;
+}
+
+.ranking-name {
+  font-size: 36rpx;
+  font-weight: 600;
+}
+
+.ranking-song {
+  font-size: 24rpx;
+  margin-top: 6rpx;
+  width: 100%;
+}
+
+.ranking-song-item {
+  color: #333;
+  margin-top: 6rpx;
+
+  /* 只显示一行 */
+  display: inline-block;
+  white-space: nowrap;
+  width: 100%;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.ranking-song-item .singer{
+  color: #999;
+}
+
+.right{
+  position: relative;
+  display: flex;
+}
+
+.right .image {
+  width: 220rpx;
+  border-top-right-radius: 12rpx;
+  border-bottom-right-radius: 12rpx;
+  background-size: cover;
+}
+
+.right .player-counter{
+  position: absolute;
+  right: 0;
+  bottom: 0rpx;
+  color: #fff;
+  font-size: 22rpx;
+  border-radius: 12rpx;
+  padding: 6rpx 10rpx;
+  background: rgba(0, 0, 0, 0.4);
+}

@@ -1,0 +1,29 @@
+function formatCount(count) {
+  var count = parseInt(count)
+  if(count > 100000000){
+    return (count / 100000000).toFixed(1) + "亿"
+  } else if(count > 10000){
+    return (count / 10000).toFixed(1) + "万"
+  } else {
+    return count + ""
+  }
+}
+
+function formatDuration(duration){
+  duration = duration /1000
+  var minute = Math.floor(duration/60)
+  var second = Math.floor(duration) % 60
+  return padLefZero(minute)+":"+padLefZero(second)
+}
+
+//在视频的时长分钟和秒上增加0
+function padLefZero(time) {
+  time = time + ""
+  return ("00" + time).slice(time.length)
+}
+
+//commonjs的导出方法
+module.exports = {
+  formatCount: formatCount,
+  formatDuration: formatDuration
+}

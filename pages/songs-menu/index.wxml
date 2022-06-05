@@ -1,0 +1,3 @@
+<!--pages/songs-menu/index.wxml-->
+<area-header title="歌单" showRight="{{false}}"></area-header>
+<song-menu-area scrollY="{{true}}" songMenu="{{songListMenu}}" wx:if="{{songListMenu}}" area="area2" menuListClass="menu-list2" menuItemClass="menu-item2"></song-menu-area>

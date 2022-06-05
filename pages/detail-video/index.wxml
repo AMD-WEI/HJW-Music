@@ -1,0 +1,2 @@
+<!-- pages/detail-video/index.wxml -->
+<video class="video" autoplay loop referrer-policy="origin" danmu-list="{{danmuList}}" src="{{mvURLInfo.url}}"></video>
