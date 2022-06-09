@@ -1,5 +1,8 @@
 // pages/music-player/index.js
 import { getSongDetail } from "../../service/api_player"
+import {
+  audioContext
+} from "../../store/index"
 Page({
 
   /**
@@ -9,7 +12,12 @@ Page({
     id: 0,
     currentSong: {},
     currentPage: 0,
-    contentHeight: 0
+    contentHeight: 0,
+    durationTime: 0,
+    currentTime: 0,
+    isMusicLyric: true,
+    sliderValue: 0,
+    isSilderChanging: false
   },
 
   /**
@@ -25,25 +33,74 @@ Page({
     const statusBarHeight = globalData.statusBarHeight
     const navbarHeight = globalData.navbarHeight
     const contentHeight = screenHeight - statusBarHeight - navbarHeight
+    const deviceRedio = globalData.deviceRedio
     console.log(contentHeight);
-    this.setData({ contentHeight })
+    this.setData({
+      contentHeight,
+      isMusicLyric: deviceRedio >= 2
+    })
 
-    // 创建播放器
-    const audioContext = wx.createInnerAudioContext()
+    // 使用audioContext播放歌曲
+    audioContext.stop()
     audioContext.src = `https://music.163.com/song/media/outer/url?id=${id}.mp3`
-    audioContext.play()
+    audioContext.autoplay = true
+    this.setupAudioContextListener()
   },
 
-  //网络请求
-  getPageData: function (ids) {
-    getSongDetail(ids).then(res => {
-      this.setData({ currentSong: res.songs[0] })
+  //====================  事件监听  ====================
+  setupAudioContextListener: function () {
+    audioContext.onCanplay(() => {
+      audioContext.play()
+    })
+
+    audioContext.onTimeUpdate(() => {
+      const currentTime = audioContext.currentTime * 1000
+      if (!this.data.isSilderChanging) {
+        //记录滑条的位置
+        const sliderValue = currentTime / this.data.durationTime * 100
+        this.setData({ sliderValue, currentTime })
+      }
     })
   },
 
-  //
+  //====================  网络请求  ====================
+  getPageData: function (ids) {
+    getSongDetail(ids).then(res => {
+      this.setData({
+        currentSong: res.songs[0],
+        durationTime: res.songs[0].dt
+      })
+    })
+  },
+
+  // ==================== 事件处理  ====================
+  handleSliderChange: function (event) {
+    // 1.获取slider变化的值
+    const value = event.detail.value
+
+    //2.计算当点击滑条时，滑条的位置与需要播放的音乐的时间对应的currentTime
+    const currentTime = this.data.durationTime * value / 100
+
+    //3.执行前先暂停音乐播放
+    audioContext.pause()
+
+    //4.执行当前滑条位置的音乐时间，这里会调用上面的onCanplay函数 
+    audioContext.seek(currentTime / 1000)
+
+    //5.记录最新的sliderValue
+    //这里isSliderChanging设置为false是因为handleSliderChanging调用完成之后会调用handleSliderChange，这时从handleSliderChanging过来的isSilderChanging还是true
+    this.setData({ sliderValue: value, isSilderChanging: false })
+  },
+
+  handleSliderChanging: function (event) {
+    const sliderValue = event.detail.value
+    const currentTime = this.data.durationTime * sliderValue / 100
+    this.setData({ currentTime, isSilderChanging: true, sliderValue })
+    // this.setData({ isSilderChanging: true })
+  },
+
   handleSwiperChange: function (event) {
-    const current = event.detail.current
-    this.setData({ currentPage: current })
-  }
+    const currentPage = event.detail.current
+    this.setData({ currentPage })
+  },
 })
