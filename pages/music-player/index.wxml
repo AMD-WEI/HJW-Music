@@ -24,7 +24,7 @@
         <view class="alias">专辑：{{currentSong.alia[0]? currentSong.alia[0]:currentSong.name}}</view>
       </view>
     </view>
-    <view class="lyric" wx:if="{{isMusicLyric}}">歌词</view>
+    <view class="lyric" wx:if="{{isMusicLyric}}">{{currentLyricText}}</view>
     <view class="grogress">
       <slider class="slider" value="{{sliderValue}}" bindchanging="handleSliderChanging" bindchange="handleSliderChange" block-size="{{12}}" />
       <view class="time">
@@ -40,5 +40,11 @@
       <image class="btn btn-music" src="/assets/images/player/play_music.png"></image>
     </view>
   </swiper-item>
-  <swiper-item>2</swiper-item>
+  <swiper-item>
+    <scroll-view scroll-y class="lyric-list">
+      <block wx:for="{{lyricInfos}}" wx:key="index">
+        <view class="item {{currentLyricIndex === index ? 'active' : ''}}">{{item.lyricText}}</view>
+      </block>
+    </scroll-view>
+  </swiper-item>
 </swiper>

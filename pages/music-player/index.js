@@ -1,8 +1,14 @@
 // pages/music-player/index.js
-import { getSongDetail } from "../../service/api_player"
+import {
+  getSongDetail,
+  getSongLyric
+} from "../../service/api_player"
 import {
   audioContext
 } from "../../store/index"
+import {
+  parseLyric
+} from "../../utils/parse-lyric"
 Page({
 
   /**
@@ -17,7 +23,10 @@ Page({
     currentTime: 0,
     isMusicLyric: true,
     sliderValue: 0,
-    isSilderChanging: false
+    isSilderChanging: false,
+    lyricInfos: [],
+    currentLyricText: "",
+    currentLyricIndex: 0
   },
 
   /**
@@ -27,6 +36,7 @@ Page({
     const id = options.id
     this.setData({ id })
     this.getPageData(id)
+    this.getSongLyric(id)
 
     const globalData = getApp().globalData
     const screenHeight = globalData.screenHeight
@@ -34,7 +44,6 @@ Page({
     const navbarHeight = globalData.navbarHeight
     const contentHeight = screenHeight - statusBarHeight - navbarHeight
     const deviceRedio = globalData.deviceRedio
-    console.log(contentHeight);
     this.setData({
       contentHeight,
       isMusicLyric: deviceRedio >= 2
@@ -60,6 +69,18 @@ Page({
         const sliderValue = currentTime / this.data.durationTime * 100
         this.setData({ sliderValue, currentTime })
       }
+      let i = 0
+      for (; i < this.data.lyricInfos.length; i++) {
+        const lyricInfo = this.data.lyricInfos[i]
+        if (currentTime < lyricInfo.time) {
+          break
+        }
+      }
+      const currentIndex = i - 1
+      if (this.data.currentLyricIndex != currentIndex) {
+        const currentLyricInfo = this.data.lyricInfos[currentIndex]
+        this.setData({ currentLyricText: currentLyricInfo.lyricText, currentLyricIndex: currentIndex })
+      }
     })
   },
 
@@ -69,6 +90,17 @@ Page({
       this.setData({
         currentSong: res.songs[0],
         durationTime: res.songs[0].dt
+      })
+    })
+  },
+
+  //获取歌词
+  getSongLyric: function (id) {
+    getSongLyric(id).then(res => {
+      const lyricString = res.lrc.lyric
+      const lyrics = parseLyric(lyricString)
+      this.setData({
+        lyricInfos: lyrics
       })
     })
   },
