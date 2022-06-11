@@ -39,7 +39,7 @@ Page({
 
     //判断关键字是否为空
     if (!searchValue.length) {
-      this.setData({ searchSuggestSongs: [],queryResultSongs: [] })
+      this.setData({ searchSuggestSongs: [], queryResultSongs: [] })
       debounceGetSearchSuggest.cancel()
       return
     }
@@ -48,7 +48,7 @@ Page({
     debounceGetSearchSuggest(searchValue).then(res => {
       const searchSuggestSongs = res.result.allMatch
       this.setData({ searchSuggestSongs })
-      if(!searchSuggestSongs) return
+      if (!searchSuggestSongs) return
 
       //将searchSuggestSongs的keyword遍历进suggestKeywords
       const suggestKeywords = searchSuggestSongs.map(item => item.keyword)
@@ -73,8 +73,8 @@ Page({
     //获取searchSuggestSongs遍历出来的keyword
     const keyword = event.currentTarget.dataset.keyword
 
-    this.setData({searchValue: keyword})
+    this.setData({ searchValue: keyword })
 
     this.handleSearchAction()
-  }
+  },
 })

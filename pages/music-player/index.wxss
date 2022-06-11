@@ -82,6 +82,8 @@ page {
   align-items: center;
   justify-content: center;
   flex: 1;
+  font-size: 26rpx;
+  color: #26ce8a;
 }
 
 /* 进度 */
@@ -130,6 +132,18 @@ page {
   height: 130rpx;
 }
 
+/* 滑条上的歌词样式 */
+.lyric-sliderUp {
+  height: 40rpx;
+  box-sizing: border-box;
+  overflow: hidden;
+}
+
+.lyric-sliderUp .active {
+  color: #26ce8a;
+  font-size: 35rpx;
+}
+
 /* 歌词分页的样式 */
 .lyric-list {
   height: 100%;
@@ -137,6 +151,7 @@ page {
   overflow: hidden;
 }
 
+/* 去除滚动条 */
 ::-webkit-scrollbar {
   width: 0;
   height: 0;
@@ -153,6 +168,14 @@ page {
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
+}
+
+.lyric-list .item:nth-of-type(1) {
+  padding-top: 40vh;
+}
+
+.lyric-list .item:last-child {
+  padding-bottom: 40vh;
 }
 
 .lyric-list .item.active {

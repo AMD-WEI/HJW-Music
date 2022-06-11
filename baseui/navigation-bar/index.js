@@ -3,7 +3,7 @@
 const globalData = getApp().globalData
 Component({
   options: {
-    multipleSlots:true
+    multipleSlots: true
   },
   /**
    * 组件的属性列表
@@ -27,6 +27,8 @@ Component({
    * 组件的方法列表
    */
   methods: {
-
+    handleLeftClick: function () {
+      this.triggerEvent("click")
+    }
   }
 })

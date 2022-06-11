@@ -4,9 +4,9 @@ import {
 } from "../../service/api_music"
 import queryRect from "../../utils/query-rect"
 import throttle from "../../utils/throttle"
-import { rankingStore,  rankingMap2 } from "../../store/index"
+import { rankingStore, rankingMap2, playerStore } from "../../store/index"
 
-const throttleQueryRect = throttle(queryRect, 1000)
+const throttleQueryRect = throttle(queryRect, 1000, { trailing: true })
 Page({
 
   /**
@@ -56,7 +56,7 @@ Page({
       this.setData({
         hotSongMenu: res.playlists
       })
-      console.log("home-music/index.js:",res.playlists);
+      console.log("home-music/index.js:", res.playlists);
     })
 
     getSongMenu("流行").then(res => {
@@ -75,6 +75,8 @@ Page({
   handleSwiperImageLoaded: function () {
     throttleQueryRect(".swiper-item-image").then(res => {
       const rect = res[0]
+      // bindload()函数计算可能会比较慢，还没有计算出swiperHeight的高度，页面就渲染高度，因此会报错
+      if (!rect.height) return
       this.setData({
         swiperHeight: rect.height
       })
@@ -99,8 +101,14 @@ Page({
   handleSongMenu: function (event) {
     const type = event.currentTarget.dataset.type
     wx.navigateTo({
-      url: '/pages/songs-menu/index?type='+type,
+      url: '/pages/songs-menu/index?type=' + type,
     })
+  },
+
+  handleSongItemClick: function (event) {
+    const index = event.currentTarget.dataset.index
+    playerStore.setState("playListSongs", this.data.recommendSongs)
+    playerStore.setState("playListIndex", index)
   },
 
   // 从state中获取出三个榜单的所有数据，将榜单三条数据和name、playCount等等存到rankings这个新的对象，因为首页就只展示三条榜单的歌

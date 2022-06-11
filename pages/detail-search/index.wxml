@@ -29,7 +29,7 @@
   <view class="title">最佳匹配</view>
   <view class="list">
     <block wx:for="{{queryResultSongs}}" wx:key="id">
-      <song-area-v2 item="{{item}}" index="{{index+1}}"></song-area-v2>
+      <song-item-v2 item="{{item}}" index="{{index+1}}"></song-item-v2>
     </block>
   </view>
 </view>

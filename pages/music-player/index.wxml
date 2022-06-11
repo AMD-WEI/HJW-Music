@@ -4,7 +4,7 @@
 <image class="bg-image" src="{{currentSong.al.picUrl}}" mode="aspectFill"></image>
 <view class="bg-cover"></view>
 <!-- 2.导航 -->
-<navigation-bar>
+<navigation-bar bind:click="handleBackBtnClick">
   <view slot="center" class="tab">
     <view class="{{currentPage === 0 ? 'active': ''}}">歌曲</view>
     <view class="divider">|</view>
@@ -24,7 +24,14 @@
         <view class="alias">专辑：{{currentSong.alia[0]? currentSong.alia[0]:currentSong.name}}</view>
       </view>
     </view>
+    <!-- 4.滑条上面的歌词 -->
     <view class="lyric" wx:if="{{isMusicLyric}}">{{currentLyricText}}</view>
+    <!-- <scroll-view scroll-y scroll-with-animation scroll-top="{{lyricScrollTop}}" class="lyric-sliderUp">
+      <block wx:for="{{lyricInfos}}" wx:key="index">
+        <view class="item {{currentLyricIndex === index ? 'active' : ''}}">{{item.lyricText}}</view>
+      </block>
+    </scroll-view> -->
+    <!-- 5.滑条 -->
     <view class="grogress">
       <slider class="slider" value="{{sliderValue}}" bindchanging="handleSliderChanging" bindchange="handleSliderChange" block-size="{{12}}" />
       <view class="time">
@@ -32,16 +39,18 @@
         <view class="duration">{{format.formatDuration(durationTime)}}</view>
       </view>
     </view>
+    <!-- 6.操作按钮 -->
     <view class="operation">
-      <image class="btn btn-mode" src="/assets/images/player/play_order.png"></image>
-      <image class="btn btn-prev" src="/assets/images/player/play_prev.png"></image>
-      <image class="btn btn-pause" src="/assets/images/player/play_pause.png"></image>
-      <image class="btn btn-next" src="/assets/images/player/play_next.png"></image>
+      <image class="btn btn-mode" bindtap="handleModeBtnClick" src="/assets/images/player/play_{{playerModeName}}.png"></image>
+      <image class="btn btn-prev" bindtap="handlePrevBtnClick" src="/assets/images/player/play_prev.png"></image>
+      <image class="btn btn-pause" bindtap="handlePlayingBtnClick" src="/assets/images/player/play_{{playingName}}.png"></image>
+      <image class="btn btn-next" bindtap="handleNextBtnClick" src="/assets/images/player/play_next.png"></image>
       <image class="btn btn-music" src="/assets/images/player/play_music.png"></image>
     </view>
   </swiper-item>
+  <!-- 7.歌词页面 -->
   <swiper-item>
-    <scroll-view scroll-y class="lyric-list">
+    <scroll-view scroll-y scroll-top="{{lyricScrollTop}}" scroll-with-animation class="lyric-list">
       <block wx:for="{{lyricInfos}}" wx:key="index">
         <view class="item {{currentLyricIndex === index ? 'active' : ''}}">{{item.lyricText}}</view>
       </block>

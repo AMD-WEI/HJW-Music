@@ -1,14 +1,7 @@
 // pages/music-player/index.js
-import {
-  getSongDetail,
-  getSongLyric
-} from "../../service/api_player"
-import {
-  audioContext
-} from "../../store/index"
-import {
-  parseLyric
-} from "../../utils/parse-lyric"
+import { playerStore, audioContext } from "../../store/index"
+
+const playerModeNames = ["order", "repeat", "random"]
 Page({
 
   /**
@@ -16,17 +9,26 @@ Page({
    */
   data: {
     id: 0,
+
     currentSong: {},
-    currentPage: 0,
-    contentHeight: 0,
     durationTime: 0,
+    lyricInfos: [],
+
     currentTime: 0,
+    currentLyricIndex: 0,
+    currentLyricText: "",
+
     isMusicLyric: true,
     sliderValue: 0,
     isSilderChanging: false,
-    lyricInfos: [],
-    currentLyricText: "",
-    currentLyricIndex: 0
+    lyricScrollTop: 0,
+    currentPage: 0,
+    contentHeight: 0,
+
+    playerModeIndex: 0,
+    playerModeName: "order",
+    playingName: "pause",
+    isPlaying: false
   },
 
   /**
@@ -35,8 +37,14 @@ Page({
   onLoad(options) {
     const id = options.id
     this.setData({ id })
-    this.getPageData(id)
-    this.getSongLyric(id)
+    // this.getPageData(id)
+    // this.getSongLyric(id)
+
+    //再点击歌曲进入到song-item-v1组件的时候就触发player-store.js里面的网络请求
+    this.setupPlayerStoreListener()
+
+    // playerStore.dispatch("playMusicWithSongIdAction", { id })
+
 
     const globalData = getApp().globalData
     const screenHeight = globalData.screenHeight
@@ -48,62 +56,28 @@ Page({
       contentHeight,
       isMusicLyric: deviceRedio >= 2
     })
-
-    // 使用audioContext播放歌曲
-    audioContext.stop()
-    audioContext.src = `https://music.163.com/song/media/outer/url?id=${id}.mp3`
-    audioContext.autoplay = true
-    this.setupAudioContextListener()
-  },
-
-  //====================  事件监听  ====================
-  setupAudioContextListener: function () {
-    audioContext.onCanplay(() => {
-      audioContext.play()
-    })
-
-    audioContext.onTimeUpdate(() => {
-      const currentTime = audioContext.currentTime * 1000
-      if (!this.data.isSilderChanging) {
-        //记录滑条的位置
-        const sliderValue = currentTime / this.data.durationTime * 100
-        this.setData({ sliderValue, currentTime })
-      }
-      let i = 0
-      for (; i < this.data.lyricInfos.length; i++) {
-        const lyricInfo = this.data.lyricInfos[i]
-        if (currentTime < lyricInfo.time) {
-          break
-        }
-      }
-      const currentIndex = i - 1
-      if (this.data.currentLyricIndex != currentIndex) {
-        const currentLyricInfo = this.data.lyricInfos[currentIndex]
-        this.setData({ currentLyricText: currentLyricInfo.lyricText, currentLyricIndex: currentIndex })
-      }
-    })
   },
 
   //====================  网络请求  ====================
-  getPageData: function (ids) {
-    getSongDetail(ids).then(res => {
-      this.setData({
-        currentSong: res.songs[0],
-        durationTime: res.songs[0].dt
-      })
-    })
-  },
+  // getPageData: function (ids) {
+  //   getSongDetail(ids).then(res => {
+  //     this.setData({
+  //       currentSong: res.songs[0],
+  //       durationTime: res.songs[0].dt
+  //     })
+  //   })
+  // },
 
   //获取歌词
-  getSongLyric: function (id) {
-    getSongLyric(id).then(res => {
-      const lyricString = res.lrc.lyric
-      const lyrics = parseLyric(lyricString)
-      this.setData({
-        lyricInfos: lyrics
-      })
-    })
-  },
+  // getSongLyric: function (id) {
+  //   getSongLyric(id).then(res => {
+  //     const lyricString = res.lrc.lyric
+  //     const lyrics = parseLyric(lyricString)
+  //     this.setData({
+  //       lyricInfos: lyrics
+  //     })
+  //   })
+  // },
 
   // ==================== 事件处理  ====================
   handleSliderChange: function (event) {
@@ -124,15 +98,85 @@ Page({
     this.setData({ sliderValue: value, isSilderChanging: false })
   },
 
+  //====================  事件处理  ====================
+
   handleSliderChanging: function (event) {
     const sliderValue = event.detail.value
     const currentTime = this.data.durationTime * sliderValue / 100
-    this.setData({ currentTime, isSilderChanging: true, sliderValue })
-    // this.setData({ isSilderChanging: true })
+    this.setData({ currentTime, isSilderChanging: true })
   },
 
   handleSwiperChange: function (event) {
     const currentPage = event.detail.current
     this.setData({ currentPage })
   },
+
+  handleBackBtnClick: function () {
+    wx.navigateBack()
+  },
+
+  handlePlayingBtnClick: function () {
+    playerStore.dispatch("changeMusicPlayStatusAction", !this.data.isPlaying)
+  },
+
+  handleModeBtnClick: function () {
+    let playerModeIndex = this.data.playerModeIndex + 1
+    if (playerModeIndex === 3) playerModeIndex = 0
+    playerStore.setState("playerModeIndex", playerModeIndex)
+  },
+
+  handlePrevBtnClick: function () {
+    playerStore.dispatch("switchMusicAction", false)
+  },
+
+  handleNextBtnClick: function () {
+    playerStore.dispatch("switchMusicAction")
+  },
+
+  //====================  数据监听  ====================
+  setupPlayerStoreListener: function () {
+    playerStore.onStates(["currentSong", "durationTime", "lyricInfos"], ({
+      currentSong,
+      durationTime,
+      lyricInfos
+    }) => {
+      if (currentSong) this.setData({ currentSong })
+      if (durationTime) this.setData({ durationTime })
+      if (lyricInfos) this.setData({ lyricInfos })
+    })
+
+    playerStore.onStates(["currentTime", "currentLyricText", "currentLyricIndex"], ({
+      currentTime,
+      currentLyricText,
+      currentLyricIndex
+    }) => {
+      //时间变化
+      if (currentTime && !this.data.isSilderChanging) {
+        // 记录滑条的位置
+        const sliderValue = currentTime / this.data.durationTime * 100
+        this.setData({ sliderValue, currentTime })
+      }
+      // 歌词变化
+      if (currentLyricIndex) {
+        this.setData({ currentLyricIndex, lyricScrollTop: currentLyricIndex * 35 })
+      }
+
+      if (currentLyricText) {
+        this.setData({ currentLyricText })
+      }
+    })
+
+    playerStore.onStates(["playerModeIndex", "isPlaying"], ({ playerModeIndex, isPlaying }) => {
+      if (playerModeIndex !== undefined) {
+        this.setData({ playerModeIndex, playerModeName: playerModeNames[playerModeIndex] })
+      }
+
+      if (isPlaying !== undefined) {
+        this.setData({
+          isPlaying,
+          playingName: isPlaying ? "pause" : "resume"
+        })
+      }
+    })
+  }
 })
