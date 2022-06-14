@@ -25,6 +25,17 @@
 <view class="ranking">
   <area-header title="巅峰榜" showRight="false"></area-header>
   <block wx:for="{{rankings}}" wx:key="index">
-    <ranking-area-item item="{{item}}" data-idx="{{index}}" bindtap="handleRankingItemClick"></ranking-area-item>
+    <ranking-area-item item="{{item}}" data-idx="{{index}}" style="margin-buttom:{{currentSong.name? 44: 0}}px" bindtap="handleRankingItemClick"></ranking-area-item>
   </block>
+</view>
+<!-- 播放栏 -->
+<view class="play-bar" wx:if="{{currentSong.name}}">
+  <view class="left" bindtap="handlePlayBarClick">
+    <image class="album album-anim" src="{{currentSong.al.picUrl}}" mode="aspectFill" style=" animation-play-state:{{isPlaying? 'running': 'paused'}}" />
+    <view class="name">{{currentSong.name}}</view>
+  </view>
+  <view class="right">
+    <image class="icon play" src="/assets/images/music/{{isPlaying? 'pause':'play'}}_icon.png" bindtap="handlePlayBtnClick" />
+    <image class="icon playlist" src="/assets/images/music/playlist_icon.png" />
+  </view>
 </view>

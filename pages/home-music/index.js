@@ -19,6 +19,10 @@ Page({
     hotSongMenu: [],
     recommendSongMenu: [],
     rankings: { 0: {}, 2: {}, 3: {} },
+    currentSong: {},
+    isPlaying: false,
+
+    id: 0
   },
 
   /**
@@ -27,18 +31,10 @@ Page({
   onLoad: function (options) {
     this.getPageData()
 
-    //发起数据共享的网络请求，获取热歌排行榜数据
+    //发起数据共享的网络请求，获取排行榜数据
     rankingStore.dispatch("getRankingDataActions")
 
-    rankingStore.onState("hotRanking", (res) => {
-      if (!res.tracks) return
-      const recommendSongs = res.tracks.slice(0, 6)
-      this.setData({ recommendSongs })
-    })
-
-    rankingStore.onState("newRanking", this.getNewRankingHandler(0))
-    rankingStore.onState("originalRanking", this.getNewRankingHandler(2))
-    rankingStore.onState("upRanking", this.getNewRankingHandler(3))
+    this.setupPlayerStoreListener()
   },
 
   getPageData: function () {
@@ -56,7 +52,6 @@ Page({
       this.setData({
         hotSongMenu: res.playlists
       })
-      console.log("home-music/index.js:", res.playlists);
     })
 
     getSongMenu("流行").then(res => {
@@ -76,7 +71,7 @@ Page({
     throttleQueryRect(".swiper-item-image").then(res => {
       const rect = res[0]
       // bindload()函数计算可能会比较慢，还没有计算出swiperHeight的高度，页面就渲染高度，因此会报错
-      if (!rect.height) return
+      if (!rect.height && !rect) return
       this.setData({
         swiperHeight: rect.height
       })
@@ -92,12 +87,6 @@ Page({
     this.navigateToDetailSongsPage(rankingMap2[idx])
   },
 
-  navigateToDetailSongsPage: function (rankingName) {
-    wx.navigateTo({
-      url: '/pages/detail-songs/index?rankingName=' + rankingName + '&type=rank'
-    })
-  },
-
   handleSongMenu: function (event) {
     const type = event.currentTarget.dataset.type
     wx.navigateTo({
@@ -109,6 +98,45 @@ Page({
     const index = event.currentTarget.dataset.index
     playerStore.setState("playListSongs", this.data.recommendSongs)
     playerStore.setState("playListIndex", index)
+  },
+
+  handlePlayBtnClick: function () {
+    playerStore.dispatch("changeMusicPlayStatusAction", !this.data.isPlaying)
+  },
+
+  handlePlayBarClick: function () {
+    playerStore.onState("id", (id) => {
+      this.data.id = id
+      wx.navigateTo({
+        url: '/pages/music-player/index?id=' + id
+      })
+
+      //对歌曲的数据进行请求和其他操作
+      playerStore.dispatch('playMusicWithSongIdAction', { id })
+    })
+  },
+
+  navigateToDetailSongsPage: function (rankingName) {
+    wx.navigateTo({
+      url: '/pages/detail-songs/index?rankingName=' + rankingName + '&type=rank'
+    })
+  },
+
+  setupPlayerStoreListener: function () {
+    rankingStore.onState("hotRanking", (hotRanking) => {
+      if (!hotRanking.tracks) return
+      const recommendSongs = hotRanking.tracks.slice(0, 6)
+      this.setData({ recommendSongs })
+    })
+
+    rankingStore.onState("newRanking", this.getNewRankingHandler(0))
+    rankingStore.onState("originalRanking", this.getNewRankingHandler(2))
+    rankingStore.onState("upRanking", this.getNewRankingHandler(3))
+
+    playerStore.onStates(["currentSong", "isPlaying"], ({ currentSong, isPlaying }) => {
+      if (currentSong) this.setData({ currentSong })
+      if (isPlaying !== undefined) this.setData({ isPlaying })
+    })
   },
 
   // 从state中获取出三个榜单的所有数据，将榜单三条数据和name、playCount等等存到rankings这个新的对象，因为首页就只展示三条榜单的歌
@@ -125,5 +153,5 @@ Page({
         rankings: newRankings
       })
     }
-  }
+  },
 })

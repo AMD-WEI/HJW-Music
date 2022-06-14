@@ -58,7 +58,7 @@ const playerStore = new HYEventStore({
       audioContext.src = `https://music.163.com/song/media/outer/url?id=${id}.mp3`
       audioContext.autoplay = true
 
-      // 只有首次播放才需要监听下面的事件
+      // 只有首次播放才需要监听下面的事件,因为是同一个audioContext，没必要重新监听
       if (ctx.isFirstPlay) {
         // 监听audioContext的一些事件
         this.dispatch("setupAudioContextListenerAction")
