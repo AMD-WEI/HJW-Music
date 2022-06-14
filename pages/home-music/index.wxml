@@ -29,13 +29,16 @@
   </block>
 </view>
 <!-- 播放栏 -->
-<view class="play-bar" wx:if="{{currentSong.name}}">
-  <view class="left" bindtap="handlePlayBarClick">
+<view class="play-bar-placeholder" wx:if="{{currentSong.name}}"></view>
+<!-- 上面这个是一个占位用的，为的是在显示play-bar的时候，将整个页面向上移动44px，不会挡住页面 -->
+<view class="play-bar" wx:if="{{currentSong.name}}" bindtap="handlePlayBarClick">
+  <view class="left">
     <image class="album album-anim" src="{{currentSong.al.picUrl}}" mode="aspectFill" style=" animation-play-state:{{isPlaying? 'running': 'paused'}}" />
     <view class="name">{{currentSong.name}}</view>
   </view>
   <view class="right">
-    <image class="icon play" src="/assets/images/music/{{isPlaying? 'pause':'play'}}_icon.png" bindtap="handlePlayBtnClick" />
+    <!-- 阻止冒泡，就是当点击暂停或点击按钮的时候，不会触发下面的跳转方法 -->
+    <image class="icon play" src="/assets/images/music/{{isPlaying? 'pause':'play'}}_icon.png" catchtap="handlePlayBtnClick" />
     <image class="icon playlist" src="/assets/images/music/playlist_icon.png" />
   </view>
 </view>

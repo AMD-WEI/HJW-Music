@@ -1,7 +1,8 @@
 import { HYEventStore } from "hy-event-store"
 import { getSongDetail, getSongLyric } from "../service/api_player"
 import { parseLyric } from "../utils/parse-lyric"
-const audioContext = wx.createInnerAudioContext()
+// const audioContext = wx.createInnerAudioContext()
+const audioContext = wx.getBackgroundAudioManager()
 
 const playerStore = new HYEventStore({
   state: {
@@ -19,6 +20,7 @@ const playerStore = new HYEventStore({
     playerModeName: "order",  //  0:循环播放  1：单曲循环   2：随机播放
 
     isPlaying: false,
+    isStoping: true,
 
     playListSongs: [],
     playListIndex: 0
@@ -45,6 +47,7 @@ const playerStore = new HYEventStore({
       getSongDetail(id).then(res => {
         ctx.currentSong = res.songs[0]
         ctx.durationTime = res.songs[0].dt
+        audioContext.title = res.songs[0].name
       }),
 
         getSongLyric(id).then(res => {
@@ -57,6 +60,7 @@ const playerStore = new HYEventStore({
       audioContext.stop()
       audioContext.src = `https://music.163.com/song/media/outer/url?id=${id}.mp3`
       audioContext.autoplay = true
+      audioContext.title = id
 
       // 只有首次播放才需要监听下面的事件,因为是同一个audioContext，没必要重新监听
       if (ctx.isFirstPlay) {
@@ -103,10 +107,31 @@ const playerStore = new HYEventStore({
       audioContext.onEnded(() => {
         this.dispatch("switchMusicAction")
       })
+
+      // 监听播放状态，播放就会回调这个函数
+      audioContext.onPlay(() => {
+        ctx.isPlaying = true
+      })
+
+      // 监听暂停状态，暂停就会回调这个函数
+      audioContext.onPause(() => {
+        ctx.isPlaying = false
+      })
+
+      // 监听停止状态，这个状态是在关闭浮窗的时候触发的
+      audioContext.onStop(() => {
+        ctx.isPlaying = false
+        ctx.isStoping = true
+      })
     },
 
     changeMusicPlayStatusAction(ctx, isPlaying) {
       ctx.isPlaying = isPlaying
+      if (ctx.isPlaying && ctx.isStoping) {
+        audioContext.src = `https://music.163.com/song/media/outer/url?id=${ctx.id}.mp3`
+        audioContext.title = ctx.currentSong.name
+        ctx.isStoping = false
+      }
       ctx.isPlaying ? audioContext.play() : audioContext.pause()
     },
 

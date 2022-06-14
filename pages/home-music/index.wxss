@@ -26,6 +26,10 @@ page {
 }
 
 /* 播放栏样式 */
+.play-bar-placeholder{
+  height: 44px;
+}
+
 .play-bar{
   display: flex;
   justify-content: space-between;
@@ -88,3 +92,4 @@ page {
 .album-anim{
   animation: albumRotate 16s linear infinite;
 }
+

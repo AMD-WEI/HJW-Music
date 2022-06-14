@@ -75,6 +75,8 @@ Page({
       this.setData({
         swiperHeight: rect.height
       })
+    }).catch((err) => {
+
     })
   },
 
@@ -100,19 +102,13 @@ Page({
     playerStore.setState("playListIndex", index)
   },
 
-  handlePlayBtnClick: function () {
+  handlePlayBtnClick: function (event) {
     playerStore.dispatch("changeMusicPlayStatusAction", !this.data.isPlaying)
   },
 
   handlePlayBarClick: function () {
-    playerStore.onState("id", (id) => {
-      this.data.id = id
-      wx.navigateTo({
-        url: '/pages/music-player/index?id=' + id
-      })
-
-      //对歌曲的数据进行请求和其他操作
-      playerStore.dispatch('playMusicWithSongIdAction', { id })
+    wx.navigateTo({
+      url: "/pages/music-player/index?id=" + this.data.currentSong.id
     })
   },
 

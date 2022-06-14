@@ -88,7 +88,7 @@ Page({
     const currentTime = this.data.durationTime * value / 100
 
     //3.执行前先暂停音乐播放
-    audioContext.pause()
+    // audioContext.pause()
 
     //4.执行当前滑条位置的音乐时间，这里会调用上面的onCanplay函数 
     audioContext.seek(currentTime / 1000)
