@@ -1,6 +1,6 @@
 import jwRequest from "./index"
 
-export function getTopMV(offset, limit = 10){
+export function getTopMV(offset, limit = 10) {
   return jwRequest.get("/top/mv", {
     offset,
     limit

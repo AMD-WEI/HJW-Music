@@ -25,7 +25,7 @@ Component({
     handleSongItemClick: function () {
       const id = this.properties.item.id
       wx.navigateTo({
-        url: '/pages/music-player/index?id=' + id
+        url: '/packagePlayer/pages/music-player/index?id=' + id
       })
 
       //对歌曲的数据进行请求和其他操作

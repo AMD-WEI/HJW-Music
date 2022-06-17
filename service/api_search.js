@@ -5,14 +5,14 @@ export function getSearchHot() {
 }
 
 export function getSearchSuggest(keywords) {
-  return jwRequest.get("/search/suggest",{
+  return jwRequest.get("/search/suggest", {
     keywords,
     type: "mobile"
   })
 }
 
-export function  getSearchResult(keywords) {
-  return jwRequest.get("/search",{
+export function getSearchResult(keywords) {
+  return jwRequest.get("/search", {
     keywords
   })
 }

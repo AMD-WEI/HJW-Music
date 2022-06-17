@@ -1,5 +1,5 @@
 // pages/music-player/index.js
-import { playerStore, audioContext } from "../../store/index"
+import { playerStore, audioContext } from "../../../store/index"
 
 const playerModeNames = ["order", "repeat", "random"]
 Page({

@@ -1,5 +1,5 @@
 <!-- pages/music-player/index.wxml -->
-<wxs src="../../utils/format.wxs" module="format"></wxs>
+<wxs src="../../../utils/format.wxs" module="format"></wxs>
 <!-- 1.背景 -->
 <image class="bg-image" src="{{currentSong.al.picUrl}}" mode="aspectFill"></image>
 <view class="bg-cover"></view>
@@ -26,11 +26,6 @@
     </view>
     <!-- 4.滑条上面的歌词 -->
     <view class="lyric" wx:if="{{isMusicLyric}}">{{currentLyricText}}</view>
-    <!-- <scroll-view scroll-y scroll-with-animation scroll-top="{{lyricScrollTop}}" class="lyric-sliderUp">
-      <block wx:for="{{lyricInfos}}" wx:key="index">
-        <view class="item {{currentLyricIndex === index ? 'active' : ''}}">{{item.lyricText}}</view>
-      </block>
-    </scroll-view> -->
     <!-- 5.滑条 -->
     <view class="grogress">
       <slider class="slider" value="{{sliderValue}}" bindchanging="handleSliderChanging" bindchange="handleSliderChange" block-size="{{12}}" />
@@ -41,11 +36,11 @@
     </view>
     <!-- 6.操作按钮 -->
     <view class="operation">
-      <image class="btn btn-mode" bindtap="handleModeBtnClick" src="/assets/images/player/play_{{playerModeName}}.png"></image>
-      <image class="btn btn-prev" bindtap="handlePrevBtnClick" src="/assets/images/player/play_prev.png"></image>
-      <image class="btn btn-pause" bindtap="handlePlayingBtnClick" src="/assets/images/player/play_{{playingName}}.png"></image>
-      <image class="btn btn-next" bindtap="handleNextBtnClick" src="/assets/images/player/play_next.png"></image>
-      <image class="btn btn-music" src="/assets/images/player/play_music.png"></image>
+      <image class="btn btn-mode" bindtap="handleModeBtnClick" src="/packagePlayer/assets/images/player/play_{{playerModeName}}.png"></image>
+      <image class="btn btn-prev" bindtap="handlePrevBtnClick" src="/packagePlayer/assets/images/player/play_prev.png"></image>
+      <image class="btn btn-pause" bindtap="handlePlayingBtnClick" src="/packagePlayer/assets/images/player/play_{{playingName}}.png"></image>
+      <image class="btn btn-next" bindtap="handleNextBtnClick" src="/packagePlayer/assets/images/player/play_next.png"></image>
+      <image class="btn btn-music" src="/packagePlayer/assets/images/player/play_music.png"></image>
     </view>
   </swiper-item>
   <!-- 7.歌词页面 -->

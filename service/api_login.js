@@ -20,7 +20,7 @@ export function codeToToken(code) {
 }
 
 export function checkToken(token) {
-  return jwLoginRequest.post("/auth", {}, token)
+  return jwLoginRequest.post("/auth", {}, true)
 }
 
 export function checkSession() {
@@ -31,6 +31,20 @@ export function checkSession() {
       },
       fail: () => {
         resolve(false)
+      }
+    })
+  })
+}
+
+export function getUserInfo() {
+  return new Promise((resolve, reject) => {
+    wx.getUserProfile({
+      desc: 'hello',
+      success: res => {
+        resolve(res)
+      },
+      fail: err => {
+        reject(err)
       }
     })
   })
